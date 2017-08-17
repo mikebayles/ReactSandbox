@@ -1,0 +1,73 @@
+const Card = (props) => {
+	return (
+  	<div style={{margin: '1em'}}>
+      <img width="75" src={props.avatar_url} />
+      <div style={{display: 'inline-block', marginLeft: 10}}>
+        <div style={{fontSize: '1.25em', fontWeight: 'bold'}}>
+          {props.name}
+        </div>
+        <div>{props.company}</div>
+      </div>
+    </div>
+  );
+};
+
+const CardList = (props) => {
+	return (
+  	<div>
+      {props.cards.map(card => <Card {...card} />)}
+    </div>
+  );
+};
+
+class Form extends React.Component {
+	state = { userName: ''}
+	handleSubmit = (event) => {
+  	event.preventDefault();
+    console.log('Submitted', this.state.userName);
+    axios.get(`https://api.github.com/users/${this.state.userName}`)
+    	.then(resp => {
+      	console.log(resp);
+      });
+  };
+
+	render() {
+  	return (
+    	<form onSubmit={this.handleSubmit}>
+        <input value={this.state.userName} 
+        onChange={(event) => this.setState({ userName: event.target.value})} 
+        type="text" placeholder="GitHub username" />
+        <button type="submit">Add card</button>
+      </form>
+    );
+  }
+}
+
+class App extends React.Component {
+
+state = {
+	cards: [
+	{
+    avatar_url: "https://avatars1.githubusercontent.com/u/29762270?v=4",
+    name: "Mike Bayles",
+    company: "PeopleNet"
+  },
+  {
+    avatar_url: "https://avatars3.githubusercontent.com/u/12467524?v=4",
+    name: "Gary Deming",
+    company: "PeopleNet"
+  }
+	]
+};
+
+	render() {
+  	return (
+    	<div>
+        <Form />
+        <CardList cards={this.state.cards} />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, mountNode);
